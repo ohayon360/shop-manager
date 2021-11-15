@@ -1,13 +1,14 @@
-import 'package:flutter/material.dart';
 import 'login_screen.dart';
 import 'registration_screen.dart';
+import 'package:flash_chat/screens/registration_screen.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:animated_text_kit/animated_text_kit.dart';
-import 'rounded_button.dart';
 
-//state full widget allows us the change the ui in the rune time
+import 'login_screen.dart';
+
 class WelcomeScreen extends StatefulWidget {
-  static const String id = 'welcome_screen'; //static var of this class
-
+  static const String id = 'welcome_screen';
   @override
   _WelcomeScreenState createState() => _WelcomeScreenState();
 }
@@ -15,19 +16,7 @@ class WelcomeScreen extends StatefulWidget {
 class _WelcomeScreenState extends State<WelcomeScreen>
     with SingleTickerProviderStateMixin {
   AnimationController controller;
-  Animation animation; //animation object
-  //list of colors to make the titles in this screen colorized Colors
-  static const colorizeColors = [
-    Colors.purple,
-    Colors.blue,
-    Colors.yellow,
-    Colors.red,
-  ];
-//set the font size of the text , and is kind
-  static const colorizeTextStyle = TextStyle(
-    fontSize: 50.0,
-    fontFamily: 'Pacifico',
-  );
+  Animation animation;
 
   @override
   void initState() {
@@ -59,52 +48,92 @@ class _WelcomeScreenState extends State<WelcomeScreen>
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
-            Column(
+            Row(
               children: <Widget>[
                 Hero(
                   tag: 'logo',
                   child: Container(
-                    child: Image(
-                      image: NetworkImage(
-                          "https://s3.envato.com/files/299237745/001.jpg"),
-                    ),
-                    height: 100.0,
+                    child: Image.asset("images/light.png"),
+                    height: 60.0,
                   ),
                 ),
-                AnimatedTextKit(
-                  isRepeatingAnimation: true,
-                  animatedTexts: [
-                    ColorizeAnimatedText(
-                      'Trivia ',
-                      textStyle: colorizeTextStyle,
-                      colors: colorizeColors,
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    const SizedBox(width: 20.0, height: 100.0),
+                    const Text(
+                      'shop',
+                      style: TextStyle(
+                        fontSize: 80.0,
+                        fontFamily: 'Road Rage',
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(width: 20.0, height: 100.0),
+                    DefaultTextStyle(
+                      style: const TextStyle(
+                        fontSize: 40.0,
+                        //  fontFamily: 'Horizon',
+                        fontFamily: 'Road Rage',
+                        color: Colors.black,
+                      ),
+                      child:
+                          AnimatedTextKit(repeatForever: true, animatedTexts: [
+                        RotateAnimatedText('manager'),
+                      ]),
                     ),
                   ],
-                  onTap: () {
-                    print("Tap Event");
-                  },
-                  repeatForever: true,
                 ),
               ],
             ),
             SizedBox(
               height: 48.0,
             ),
-            RoundedButton(
-              title: 'משתמש רשום',
-              colour: Colors.lightBlueAccent, //the color of the button
-              //when the button is geting pressed take the user to the Login Screen
-              onPressed: () {
-                Navigator.pushNamed(context, LoginScreen.id);
-              },
+            Padding(
+              padding: EdgeInsets.symmetric(vertical: 16.0),
+              child: Material(
+                elevation: 5.0,
+                color: Colors.lightBlueAccent,
+                borderRadius: BorderRadius.circular(30.0),
+                child: MaterialButton(
+                  onPressed: () {
+                    Navigator.pushNamed(context, LoginScreen.id);
+                  },
+                  minWidth: 200.0,
+                  height: 42.0,
+                  child: Text(
+                    'התחבר',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 20,
+                    ),
+                  ),
+                ),
+              ),
             ),
-            RoundedButton(
-              title: 'הירשם',
-              colour: Colors.blueAccent, //the color of the button
-              //when the button is geting pressed take the user to the Registration Screen
-              onPressed: () {
-                Navigator.pushNamed(context, RegistrationScreen.id);
-              },
+            Padding(
+              padding: EdgeInsets.symmetric(vertical: 16.0),
+              child: Material(
+                color: Colors.blueAccent,
+                borderRadius: BorderRadius.circular(30.0),
+                elevation: 5.0,
+                child: MaterialButton(
+                  onPressed: () {
+                    Navigator.pushNamed(context, RegistrationScreen.id);
+                  },
+                  minWidth: 200.0,
+                  height: 42.0,
+                  child: Text(
+                    'צור משתמש',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 20,
+                    ),
+                  ),
+                ),
+              ),
             ),
           ],
         ),

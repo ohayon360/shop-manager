@@ -1,3 +1,4 @@
+import 'package:cool_alert/cool_alert.dart';
 import 'package:flutter/material.dart';
 import 'package:flash_chat/screens/rounded_button.dart';
 import 'package:flash_chat/constants.dart';
@@ -5,6 +6,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'quizzler_screen.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:flash_chat/screens/start_game.dart';
+import 'package:edge_alert/edge_alert.dart';
+
 
 /*
 same code like in the Registration Screen
@@ -38,10 +41,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   tag: 'logo',
                   child: Container(
                     height: 200.0,
-                    child: Image(
-                      image: NetworkImage(
-                          "https://media.istockphoto.com/vectors/true-false-measuring-gauge-vector-indicator-illustration-meter-with-vector-id1132804964?k=6&m=1132804964&s=612x612&w=0&h=DIDIPdOvTajxjKq3kCDPEG_m6XjX__8f41bZCJsLtLk="),
-                    ),
+                    child: Image.asset("images/light.png"),
                   ),
                 ),
               ),
@@ -83,12 +83,22 @@ class _LoginScreenState extends State<LoginScreen> {
                         email: email, password: password);
                     if (user != null) {
                       Navigator.pushNamed(context, Game.id);
+                      CoolAlert.show(
+                        context: context,
+                        type: CoolAlertType.success,
+                        text: "ברוכים הבאים",
+                      );
                     }
 
                     setState(() {
                       showSpinner = false;
                     });
                   } catch (e) {
+                    CoolAlert.show(
+                      context: context,
+                      type: CoolAlertType.error,
+                      text: "אופס אנה נסה שוב",
+                    );
                     print(e);
                   }
                 },

@@ -6,6 +6,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:cool_alert/cool_alert.dart';
 import 'package:flash_chat/screens/start_game.dart';
+import 'package:edge_alert/edge_alert.dart';
 
 class RegistrationScreen extends StatefulWidget {
   static const String id = 'registration_screen'; //static var id
@@ -42,10 +43,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                     height: 200.0, //the height of the container
                     //the image that we see in screen
                     //take this image from this url
-                    child: Image(
-                      image: NetworkImage(
-                          "https://media.istockphoto.com/vectors/true-false-measuring-gauge-vector-indicator-illustration-meter-with-vector-id1132804964?k=6&m=1132804964&s=612x612&w=0&h=DIDIPdOvTajxjKq3kCDPEG_m6XjX__8f41bZCJsLtLk="),
-                    ),
+                    child: Image.asset("images/light.png"),
                   ),
                 ),
               ),
@@ -54,15 +52,18 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                 height: 48.0,
               ),
               //this is the text field that we see in the ui
-              TextField(
-                keyboardType: TextInputType.emailAddress,
-                textAlign: TextAlign.center,
-                onChanged: (value) {
-                  email = value; //take the email that the user is entered
-                },
-                decoration:
-                    //the hint text to the user
-                    kTextFieldDecoration.copyWith(hintText: 'כתובת מייל'),
+              FloatingActionButton(
+
+                child: TextField(
+                  keyboardType: TextInputType.emailAddress,
+                  textAlign: TextAlign.center,
+                  onChanged: (value) {
+                    email = value; //take the email that the user is entered
+                  },
+                  decoration:
+                      //the hint text to the user
+                      kTextFieldDecoration.copyWith(hintText: 'כתובת מייל'),
+                ),
               ),
               SizedBox(
                 height: 8.0,
