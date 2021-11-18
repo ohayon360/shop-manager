@@ -5,7 +5,7 @@ import 'package:flash_chat/constants.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'quizzler_screen.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
-import 'package:flash_chat/screens/start_game.dart';
+import 'package:flash_chat/screens/home_screen.dart';
 import 'package:edge_alert/edge_alert.dart';
 
 
@@ -82,7 +82,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     final user = await _auth.signInWithEmailAndPassword(
                         email: email, password: password);
                     if (user != null) {
-                      Navigator.pushNamed(context, Game.id);
+                      Navigator.pushNamed(context, HomePage.id);
                       CoolAlert.show(
                         context: context,
                         type: CoolAlertType.success,

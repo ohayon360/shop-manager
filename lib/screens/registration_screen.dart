@@ -5,7 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:cool_alert/cool_alert.dart';
-import 'package:flash_chat/screens/start_game.dart';
+import 'package:flash_chat/screens/home_screen.dart';
 import 'package:edge_alert/edge_alert.dart';
 
 class RegistrationScreen extends StatefulWidget {
@@ -52,18 +52,15 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                 height: 48.0,
               ),
               //this is the text field that we see in the ui
-              FloatingActionButton(
-
-                child: TextField(
-                  keyboardType: TextInputType.emailAddress,
-                  textAlign: TextAlign.center,
-                  onChanged: (value) {
-                    email = value; //take the email that the user is entered
-                  },
-                  decoration:
-                      //the hint text to the user
-                      kTextFieldDecoration.copyWith(hintText: 'כתובת מייל'),
-                ),
+              TextField(
+                keyboardType: TextInputType.emailAddress,
+                textAlign: TextAlign.center,
+                onChanged: (value) {
+                  email = value; //take the email that the user is entered
+                },
+                decoration:
+                    //the hint text to the user
+                    kTextFieldDecoration.copyWith(hintText: 'כתובת מייל'),
               ),
               SizedBox(
                 height: 8.0,
@@ -99,7 +96,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                         email: email, password: password);
                     if (newUser != null) {
 //if everything is fine take the user to the start game screen
-                      Navigator.pushNamed(context, Game.id);
+                      Navigator.pushNamed(context, HomePage.id);
                       //show to the user alert about the Registration
                       CoolAlert.show(
                         context: context,
