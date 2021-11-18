@@ -1,16 +1,21 @@
-import 'package:flash_chat/screens/start_game.dart';
+import 'package:flash_chat/screens/all_screen.dart';
+import 'package:flash_chat/screens/home_screen.dart';
+import 'package:flash_chat/screens/manager_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flash_chat/screens/welcome_screen.dart';
 import 'package:flash_chat/screens/login_screen.dart';
 import 'package:flash_chat/screens/registration_screen.dart';
-import 'package:flash_chat/screens/quizzler_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/services.dart';
+import 'package:flash_chat/screens/add_customer.dart';
+import 'package:flash_chat/screens/calc_screen.dart';
+import 'package:flash_chat/screens/search_screen.dart';
 
-//waite until the fire base will lode
-//in this line all the apps in flutter are start, like the main function in java
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   runApp(ShopManager());
 }
 
@@ -22,16 +27,17 @@ class ShopManager extends StatelessWidget {
 
       initialRoute: WelcomeScreen.id, //the default rout is the welcome screen
 
-      /*the routs are taking us to the required screen that
-      we want in are app
-      each class have static var id
-      */
+
       routes: {
         WelcomeScreen.id: (context) => WelcomeScreen(),
         LoginScreen.id: (context) => LoginScreen(),
         RegistrationScreen.id: (context) => RegistrationScreen(),
-        Quizzler.id: (context) => Quizzler(),
-        Game.id: (context) => Game(),
+       All.id: (context) => All(),
+        HomePage.id: (context) => HomePage(),
+        AddCustomer.id:(context)=>AddCustomer(),
+        Manager.id:(context)=>Manager(),
+        CalcScreen.id:(context)=>CalcScreen(),
+        SearchScreen.id:(context)=>SearchScreen(),
       },
     );
   }
