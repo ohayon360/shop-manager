@@ -26,6 +26,12 @@ dependencies:
   salomon_bottom_bar: ^3.1.0
   font_awesome_flutter: ^9.2.0
   material_floating_search_bar: ^0.3.6
+  uuid: ^3.0.5
+  art_sweetalert: ^0.0.5
+  flutter_gifimage: ^1.0.1
+  expansion_tile_card: ^2.0.0
+
+
 
 dev_dependencies:
   flutter_test:
