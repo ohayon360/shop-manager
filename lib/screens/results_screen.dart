@@ -1,17 +1,21 @@
+import 'package:flash_chat/widgets/calc_%20design.dart';
 import 'package:flutter/material.dart';
-import 'package:flash_chat/calc_ design.dart';
-import 'package:flash_chat/screens/reusable_card.dart';
-import 'package:flash_chat/screens/bottom_button.dart';
+import 'package:flash_chat/widgets/constants.dart';
+import 'package:flash_chat/widgets/reusable_card.dart';
+import 'package:flash_chat/widgets/bottom_button.dart';
+
+
+
 
 class ResultsPage extends StatelessWidget {
   ResultsPage(
-      {@required this.interpretation,
+      {
         @required this.bmiResult,
         @required this.resultText});
 
   final String bmiResult;
   final String resultText;
-  final String interpretation;
+
 
   @override
   Widget build(BuildContext context) {
@@ -49,11 +53,7 @@ class ResultsPage extends StatelessWidget {
                     bmiResult,
                     style: kBMITextStyle,
                   ),
-                  Text(
-                    interpretation,
-                    textAlign: TextAlign.center,
-                    style: kBodyTextStyle,
-                  ),
+
                 ],
               ),
             ),

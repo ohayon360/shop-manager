@@ -1,68 +1,160 @@
-import 'package:flutter/material.dart';
-import 'package:material_floating_search_bar/material_floating_search_bar.dart';
-import 'package:edge_alert/edge_alert.dart';
+import 'dart:ffi';
+import 'dart:io';
 
-class SearchScreen extends StatefulWidget {
+import 'package:art_sweetalert/art_sweetalert.dart';
+import 'package:edge_alert/edge_alert.dart';
+import 'package:flash_chat/widgets/product.dart';
+import 'package:flash_chat/widgets/product_show.dart';
+import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flash_chat/services/database.dart';
+import 'package:flash_chat/user.dart';
+import '../customer_show.dart';
+import 'loading.dart';
+import 'package:flash_chat/widgets/customer_ticket.dart';
+
+class Search extends StatefulWidget {
   static String id = 'search_screen';
 
   @override
-  State<SearchScreen> createState() => _SearchScreenState();
+  State<Search> createState() => _SearchState();
 }
 
-class _SearchScreenState extends State<SearchScreen> {
-  Widget buildFloatingSearchBar() {
-    final isPortrait =
-        MediaQuery.of(context).orientation == Orientation.portrait;
+class _SearchState extends State<Search>
+    with AutomaticKeepAliveClientMixin<Search> {
+  TextEditingController searchControllerProducts = TextEditingController();
+  Future<QuerySnapshot> searchResultsProducts;
+  bool _folded = true;
+  String temp = "";
 
-    return FloatingSearchBar(
-      hint: 'בחר לקוח',
-      scrollPadding: const EdgeInsets.only(top: 16, bottom: 56),
-      transitionDuration: const Duration(milliseconds: 800),
-      transitionCurve: Curves.easeInOut,
-      physics: const BouncingScrollPhysics(),
-      axisAlignment: isPortrait ? 0.0 : -1.0,
-      openAxisAlignment: 0.0,
-      width: isPortrait ? 600 : 500,
-      debounceDelay: const Duration(milliseconds: 500),
-      onQueryChanged: (query) {
-        // Call your model, bloc, controller here.
-      },
-      // Specify a custom transition to be used for
-      // animating between opened and closed stated.
-      transition: CircularFloatingSearchBarTransition(),
-      actions: [
-        FloatingSearchBarAction(
-          showIfOpened: false,
-          child: CircularButton(
-            icon: GestureDetector(
-              onTap: (){
-                EdgeAlert.show(
-                  context,
-                  title: 'בחירת לקוח',
-                  description: 'אנה בחר לקוח מיתוך רשימת הלקוחות לצורך החישוב',
-                  gravity: EdgeAlert.TOP,
-                );
-              },
-              child: const Icon(Icons.search),
+  handleSearchProduct(String query) async {
+    List docList = [];
+    var y = productsRef.where('keywordsCustomer', arrayContains: query).get();
+    Future<QuerySnapshot> products;
+    y.then(
+      (value) => value.docs.forEach((element) {
+        if (element.exists) {
+          dynamic doc = element.data()['displayNameSearchCustomer'];
+          docList.add(doc);
+          print(doc);
+          products = productsRef
+              .where("displayNameSearchCustomer", whereIn: docList)
+              .limit(10)
+              .get();
+          setState(() {
+            searchResultsProducts = products;
+          });
+        }
+      }),
+    );
+  }
+
+  clearSearchProducts() {
+    searchControllerProducts.clear();
+  }
+
+  Widget searchBarProducts() {
+    return Center(
+      child: AnimatedContainer(
+        duration: Duration(microseconds: 400),
+        width: _folded ? 56 : 200,
+        height: 56,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(32),
+          color: Colors.white,
+          boxShadow: kElevationToShadow[6],
+        ),
+        child: Row(
+          children: [
+            Expanded(
+              child: Container(
+                  padding: EdgeInsets.only(left: 16),
+                  child: !_folded
+                      ? TextFormField(
+                          onChanged: (query) {
+                            handleSearchProduct(query.toLowerCase());
+                            print(query);
+                          },
+                          decoration: InputDecoration(
+                            hintText: 'חפש ',
+                            hintStyle: TextStyle(
+                              color: Colors.blue[300],
+                            ),
+                            border: InputBorder.none,
+                          ),
+                        )
+                      : null),
             ),
-            onPressed: () {},
-          ),
+            AnimatedContainer(
+              duration: Duration(milliseconds: 300),
+              child: Material(
+                type: MaterialType.transparency,
+                child: InkWell(
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(_folded ? 32 : 0),
+                    topRight: Radius.circular(32),
+                    bottomLeft: Radius.circular(_folded ? 32 : 0),
+                    bottomRight: Radius.circular(32),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Icon(
+                      _folded ? Icons.search : Icons.close,
+                      color: Colors.blue[900],
+                    ),
+                  ),
+                  onTap: () {
+                    setState(() {
+                      _folded = !_folded;
+                      searchResultsProducts = null;
+                    });
+                  },
+                ),
+              ),
+            ),
+          ],
         ),
-        FloatingSearchBarAction.searchToClear(
-          showIfClosed: false,
-        ),
-      ],
-      builder: (context, transition) {
-        return ClipRRect(
-          borderRadius: BorderRadius.circular(8),
-          child: Material(
-            color: Colors.white,
-            elevation: 4.0,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: Colors.accents.map((color) {
-                return Container(height: 112, color: color);
-              }).toList(),
+      ),
+    );
+  }
+
+  //building the search results
+
+  buildSearchResultsProducts() {
+    return FutureBuilder(
+      future: searchResultsProducts,
+      builder: (context, snapshot) {
+        if (!snapshot.hasData) {
+          return loadingCircular();
+        }
+        List<ProductTicket> searchResults = [];
+        snapshot.data.docs.forEach((doc) {
+          ProductsTickets product = ProductsTickets.fromDocument(doc);
+          ProductTicket searchResult = ProductTicket(
+            name: product.name,
+            customerName: product.customerName,
+            pId: product.pId,
+            price: product.price,
+          );
+          searchResults.add(searchResult);
+        });
+        return Expanded(
+          child: GestureDetector(
+            onTap: () {
+              setState(() {
+                String res = "";
+                double sum = 0;
+                for (int i = 0; i < searchResults.length; i++) {
+                  sum += double.parse(searchResults[i].temp);
+                }
+                res = sum.toStringAsFixed(1);
+                temp = res;
+                print(res);
+              });
+            },
+            child: ListView(
+              children: searchResults,
             ),
           ),
         );
@@ -70,17 +162,101 @@ class _SearchScreenState extends State<SearchScreen> {
     );
   }
 
+  // What will happen before we see the user results
+  Container noContent() {
+    return Container(
+      child: Expanded(
+        child: ListView(
+          shrinkWrap: true,
+          children: [],
+        ),
+      ),
+    );
+  }
+
+  bool get wantKeepAlive => true;
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Scaffold(
-      backgroundColor: Colors.black,
-      body: Stack(
-        fit: StackFit.expand,
-        children: [
-          // buildMap(),
-          //   buildBottomNavigationBar(),
-          buildFloatingSearchBar(),
-        ],
+      backgroundColor: Color(0xff09031D),
+      appBar: AppBar(
+        title: Text(
+          "מחשבון",
+          style: TextStyle(
+            color: Colors.white,
+          ),
+        ),
+        backgroundColor: Color(0xff09031D),
+      ),
+      body: Container(
+        child: Column(
+          children: [
+            SizedBox(
+              height: 10,
+            ),
+            Column(
+              children: [
+                GestureDetector(
+                  onTap: (){
+                    ArtSweetAlert.show(
+                        context: context,
+                        artDialogArgs: ArtDialogArgs(
+                            type: ArtSweetAlertType.info,
+                            title: "חישוב סופי",
+                            text: " ראשית כל חפש שם לקוח ובחר מוצרים לחישוב "
+                                "בשלב השני יש לגעת באחד הפרטים והראה לך תוצאה סופית"
+                        )
+                    );
+                  },
+                  child: Text(
+                    "סהכ לתשלום ",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 32,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  height: 6,
+                ),
+                Text(
+                  temp,
+                  style: TextStyle(color: Colors.grey, fontSize: 40),
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(12.0),
+                      child: Text(
+                        "הזן שם ושם משפחה",
+                        style: TextStyle(
+                          color: Color(0xff677882),
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: searchBarProducts(),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+            searchResultsProducts == null
+                ? noContent()
+                : buildSearchResultsProducts(),
+          ],
+        ),
       ),
     );
   }
